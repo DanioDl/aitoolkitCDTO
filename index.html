@@ -20,13 +20,33 @@
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:var(--sans);color:var(--text);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
+  /* AMBIENT BACKGROUND */
+  .ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .ambient span{position:absolute;border-radius:50%;filter:blur(72px);opacity:.55;will-change:transform}
+  .ambient .a1{width:520px;height:520px;left:-130px;top:-90px;
+    background:radial-gradient(circle,rgba(230,0,126,.30),transparent 70%);animation:drift1 34s ease-in-out infinite}
+  .ambient .a2{width:560px;height:560px;right:-150px;top:34%;
+    background:radial-gradient(circle,rgba(75,59,238,.26),transparent 70%);animation:drift2 42s ease-in-out infinite}
+  .ambient .a3{width:480px;height:480px;left:26%;bottom:-170px;
+    background:radial-gradient(circle,rgba(0,176,200,.18),transparent 70%);animation:drift3 38s ease-in-out infinite}
+  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(120px,80px) scale(1.15)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-110px,60px) scale(1.1)}}
+  @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(80px,-90px) scale(1.12)}}
+  .hero,main,footer{position:relative;z-index:1}
   a{color:inherit}
   .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
 
   /* HERO */
   .hero{background:var(--ink);color:#fff;padding:54px 0 46px;position:relative;overflow:hidden}
-  .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;
-    background:radial-gradient(circle,rgba(230,0,126,.55),transparent 62%);pointer-events:none}
+  .hero .wrap{position:relative;z-index:2}
+  .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;z-index:0;
+    background:radial-gradient(circle,rgba(230,0,126,.55),transparent 62%);pointer-events:none;
+    animation:heroGlowA 26s ease-in-out infinite}
+  .hero::before{content:"";position:absolute;left:-110px;bottom:-170px;width:380px;height:380px;z-index:0;
+    background:radial-gradient(circle,rgba(75,59,238,.42),transparent 64%);pointer-events:none;
+    animation:heroGlowB 32s ease-in-out infinite}
+  @keyframes heroGlowA{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-55px,40px) scale(1.12)}}
+  @keyframes heroGlowB{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(50px,-30px) scale(1.15)}}
   .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
     color:#A9ACD8;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--magenta);display:inline-block}
@@ -103,11 +123,12 @@
     .toggles{margin-left:0;width:100%}
     .sec-count{display:none}
   }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
   :focus-visible{outline:3px solid var(--magenta);outline-offset:2px;border-radius:6px}
 </style>
 </head>
 <body>
+<div class="ambient" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
 
 <header class="hero">
   <div class="wrap">
