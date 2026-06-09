@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Нейросети для работы — внутренний гид</title>
+<style>
+  :root{
+    --ink:#12132B; --ink-soft:#23254A; --paper:#F4F5F9; --surface:#FFFFFF;
+    --magenta:#E6007E; --violet:#4B3BEE; --line:#E3E5EE;
+    --text:#1A1B2E; --muted:#6B6E86;
+    --ok-bg:#E7F7EE; --ok-fg:#0B7A43;
+    --warn-bg:#FFF1E6; --warn-fg:#C2410C;
+    --part-bg:#FFF8E1; --part-fg:#8A6400;
+    --free-bg:#E7F7EE; --free-fg:#0B7A43;
+    --freemium-bg:#EDEBFF; --freemium-fg:#3B33C4;
+    --paid-bg:#FCE6F1; --paid-fg:#B0005F;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);color:var(--text);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+  /* HERO */
+  .hero{background:var(--ink);color:#fff;padding:54px 0 46px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;
+    background:radial-gradient(circle,rgba(230,0,126,.55),transparent 62%);pointer-events:none}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:#A9ACD8;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--magenta);display:inline-block}
+  h1{font-size:clamp(30px,5vw,52px);line-height:1.05;margin:18px 0 14px;font-weight:800;letter-spacing:-.02em;max-width:18ch}
+  h1 .pink{color:var(--magenta)}
+  .lede{font-size:17px;color:#C9CBE6;max-width:62ch;margin:0}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+  .legend .chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+    border-radius:999px;padding:7px 13px;font-size:13px;display:flex;gap:8px;align-items:center}
+  .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+  /* FILTER BAR */
+  .filters{position:sticky;top:0;z-index:20;background:rgba(244,245,249,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .filters .inner{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:14px 0}
+  .cats{display:flex;gap:7px;flex-wrap:wrap}
+  .cat{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;border:1px solid var(--line);
+    background:var(--surface);border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--ink-soft);
+    transition:all .15s}
+  .cat:hover{border-color:var(--magenta)}
+  .cat[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .toggles{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+  .toggle{display:flex;gap:8px;align-items:center;font-size:13px;background:var(--surface);
+    border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;user-select:none}
+  .toggle input{accent-color:var(--magenta);width:16px;height:16px;margin:0}
+  .toggle[data-on="true"]{border-color:var(--magenta);color:var(--magenta)}
+
+  /* SECTIONS */
+  main{padding:30px 0 10px}
+  .sec{margin:34px 0}
+  .sec.hidden{display:none}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;border-bottom:2px solid var(--ink);padding-bottom:10px}
+  .sec-num{font-family:var(--mono);color:var(--magenta);font-size:14px;font-weight:600}
+  .sec-title{font-size:21px;font-weight:800;letter-spacing:-.01em;margin:0}
+  .sec-count{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:auto}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;
+    display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s,border-color .15s}
+  .card:hover{transform:translateY(-2px);box-shadow:0 10px 26px -16px rgba(18,19,43,.4);border-color:#cfd2e2}
+  .card.hidden{display:none}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .name{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .owner{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px}
+  .desc{font-size:14px;color:#3a3c54;margin:11px 0 14px;flex:1}
+  .badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}
+  .b{font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:7px;font-family:var(--mono);letter-spacing:.01em}
+  .b-vpn-no{background:var(--ok-bg);color:var(--ok-fg)}
+  .b-vpn-yes{background:var(--warn-bg);color:var(--warn-fg)}
+  .b-vpn-part{background:var(--part-bg);color:var(--part-fg)}
+  .b-free{background:var(--free-bg);color:var(--free-fg)}
+  .b-freemium{background:var(--freemium-bg);color:var(--freemium-fg)}
+  .b-paid{background:var(--paid-bg);color:var(--paid-fg)}
+  .price{font-size:12.5px;color:var(--muted);margin-bottom:13px}
+  .price b{color:var(--text);font-weight:600}
+  .go{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--ink);text-decoration:none;
+    display:inline-flex;gap:6px;align-items:center;align-self:flex-start;border-bottom:2px solid var(--magenta);padding-bottom:1px}
+  .go:hover{color:var(--magenta)}
+
+  .empty{text-align:center;color:var(--muted);padding:50px 0;font-family:var(--mono);font-size:14px;display:none}
+
+  /* SECURITY CALLOUT */
+  .note{background:var(--ink-soft);color:#E6E7F5;border-radius:16px;padding:26px 28px;margin:40px 0 10px;
+    border-left:4px solid var(--magenta)}
+  .note h3{margin:0 0 10px;font-size:17px;color:#fff}
+  .note p{margin:0 0 8px;font-size:14.5px;color:#C9CBE6}
+  .note p:last-child{margin-bottom:0}
+  .note b{color:#fff}
+
+  footer{padding:34px 0 50px;color:var(--muted);font-size:12.5px}
+  footer .meta{font-family:var(--mono);margin-bottom:6px}
+
+  @media (max-width:560px){
+    .toggles{margin-left:0;width:100%}
+    .sec-count{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  :focus-visible{outline:3px solid var(--magenta);outline-offset:2px;border-radius:6px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="dot"></span>Внутренний гид по нейросетям · обновлено 09.06.2026</div>
+    <h1>Какая нейросеть <span class="pink">для чего</span> — и нужен ли VPN</h1>
+    <p class="lede">Короткий навигатор по ИИ-инструментам: что они делают, есть ли бесплатный тариф и открываются ли из России напрямую. Выбирайте задачу — фильтр покажет, чем её закрыть прямо сейчас.</p>
+    <div class="legend">
+      <span class="chip"><span class="sw" style="background:var(--ok-fg)"></span>Без VPN</span>
+      <span class="chip"><span class="sw" style="background:var(--warn-fg)"></span>Нужен VPN</span>
+      <span class="chip"><span class="sw" style="background:var(--part-fg)"></span>Частично / с перебоями</span>
+      <span class="chip"><span class="sw" style="background:var(--free-fg)"></span>Бесплатно</span>
+      <span class="chip"><span class="sw" style="background:var(--freemium-fg)"></span>Есть бесплатный лимит</span>
+      <span class="chip"><span class="sw" style="background:var(--paid-fg)"></span>Только платно</span>
+    </div>
+  </div>
+</header>
+
+<div class="filters">
+  <div class="wrap inner">
+    <div class="cats" id="cats"></div>
+    <div class="toggles">
+      <label class="toggle" data-on="false"><input type="checkbox" id="novpn"> Только без VPN</label>
+      <label class="toggle" data-on="false"><input type="checkbox" id="free"> Есть бесплатный доступ</label>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="sections"></div>
+  <div class="empty" id="empty">Под выбранные фильтры ничего не попало. Снимите часть условий.</div>
+
+  <div class="note">
+    <h3>Прежде чем загружать рабочие данные</h3>
+    <p>Зарубежные сервисы (ChatGPT, Claude, Midjourney, Suno, Gamma) обрабатывают введённое на своих серверах за пределами РФ. <b>Не вставляйте туда коммерческую, персональную или клиентскую информацию</b> без согласования с ИБ.</p>
+    <p>Для рабочих задач с чувствительными данными безопаснее российские решения — <b>GigaChat</b> и <b>YandexGPT</b>: данные остаются в РФ-контуре, оплата рублями, есть корпоративные тарифы и API.</p>
+  </div>
+</main>
+
+<footer class="wrap">
+  <div class="meta">v1 · данные о доступе и тарифах актуальны на 09.06.2026 и могут меняться</div>
+  <div>Цены — ориентир для сравнения, не оферта. Статус VPN периодически меняется: блокировки и доступность сервисов нестабильны.</div>
+</footer>
+
+<script>
+const TOOLS = [
+  // cat, name, owner, desc, vpn: no|yes|part, tier: free|freemium|paid, price, url
+  {cat:"Текст",name:"GigaChat",owner:"Сбер · РФ",desc:"Тексты, ответы на вопросы, код и картинки. Заточен под русский язык.",vpn:"no",tier:"freemium",price:"Бесплатно ~1000 запросов/мес · далее платные пакеты",url:"https://giga.chat"},
+  {cat:"Текст",name:"YandexGPT / Алиса",owner:"Яндекс · РФ",desc:"Помощник для текстов, переводов и быстрых ответов внутри сервисов Яндекса.",vpn:"no",tier:"freemium",price:"Бесплатно · расширенно в подписке Яндекс Плюс",url:"https://ya.ru/alisa"},
+  {cat:"Текст",name:"DeepSeek",owner:"DeepSeek · КНР",desc:"Сильный в рассуждениях, коде и длинных ответах. Русский интерфейс.",vpn:"part",tier:"free",price:"Бесплатно на сайте · бывают перебои с доступом из РФ",url:"https://www.deepseek.com"},
+  {cat:"Текст",name:"Qwen",owner:"Alibaba · КНР",desc:"Многоязычная модель для текста и кода, работает напрямую.",vpn:"no",tier:"free",price:"Бесплатно",url:"https://chat.qwen.ai"},
+  {cat:"Текст",name:"Le Chat",owner:"Mistral · ЕС",desc:"Быстрый чат-ассистент для текстов и базовой работы с документами.",vpn:"no",tier:"freemium",price:"Бесплатный чат · платные тарифы для команд",url:"https://chat.mistral.ai"},
+  {cat:"Текст",name:"ChatGPT",owner:"OpenAI · США",desc:"Универсальная модель для текста, анализа, кода и картинок.",vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · Plus ≈ $20/мес",url:"https://chat.openai.com"},
+  {cat:"Текст",name:"Claude",owner:"Anthropic · США",desc:"Длинные тексты, аккуратный анализ документов и код.",vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://claude.ai"},
+
+  {cat:"Поиск",name:"Perplexity",owner:"Perplexity · США",desc:"Поисковик-ассистент: отвечает с ссылками на источники.",vpn:"part",tier:"freemium",price:"Бесплатно · Pro ≈ $20/мес",url:"https://www.perplexity.ai"},
+  {cat:"Поиск",name:"Яндекс Нейро",owner:"Яндекс · РФ",desc:"Ответы с источниками прямо в поиске Яндекса, без настроек.",vpn:"no",tier:"free",price:"Бесплатно",url:"https://ya.ru"},
+
+  {cat:"Картинки",name:"Kandinsky",owner:"Сбер · РФ",desc:"Генерация изображений по описанию. Хорошо понимает русские промты.",vpn:"no",tier:"free",price:"Бесплатно (FusionBrain / Telegram-бот)",url:"https://fusionbrain.ai"},
+  {cat:"Картинки",name:"Шедеврум",owner:"Яндекс · РФ",desc:"Картинки, аватарки и стикеры в мобильном приложении.",vpn:"no",tier:"free",price:"Бесплатно",url:"https://shedevrum.ai"},
+  {cat:"Картинки",name:"Midjourney",owner:"Midjourney · США",desc:"Топ по качеству и стилю изображений для дизайна и креатива.",vpn:"yes",tier:"paid",price:"От ≈ $10/мес",url:"https://www.midjourney.com"},
+  {cat:"Картинки",name:"FLUX",owner:"Black Forest Labs · ЕС",desc:"Фотореалистичная генерация изображений, популярна у дизайнеров.",vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · платно за объём",url:"https://blackforestlabs.io"},
+
+  {cat:"Презентации",name:"Gamma",owner:"Gamma · США",desc:"Делает презентации, лендинги и документы из текстового запроса.",vpn:"yes",tier:"freemium",price:"Бесплатно с лимитом кредитов · платно от ≈ $10/мес",url:"https://gamma.app"},
+  {cat:"Презентации",name:"Tome",owner:"Tome · США",desc:"Генерация слайдов и сторителлинг-презентаций.",vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · платные тарифы",url:"https://tome.app"},
+
+  {cat:"Музыка",name:"Suno",owner:"Suno · США",desc:"Создаёт музыку с вокалом и текстом по описанию.",vpn:"yes",tier:"freemium",price:"Бесплатные кредиты · Pro от ≈ $10/мес",url:"https://suno.com"},
+  {cat:"Музыка",name:"Udio",owner:"Udio · США",desc:"Генерация треков и музыкальных набросков высокого качества.",vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · платно за объём",url:"https://www.udio.com"},
+
+  {cat:"Видео",name:"Kling",owner:"Kuaishou · КНР",desc:"Видео из текста или фото. Работает из РФ напрямую.",vpn:"no",tier:"freemium",price:"Бесплатные кредиты · платно за объём",url:"https://klingai.com"},
+  {cat:"Видео",name:"Runway",owner:"Runway · США",desc:"Видеогенерация и монтаж с ИИ, инструменты для продакшена.",vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · от ≈ $15/мес",url:"https://runwayml.com"},
+  {cat:"Видео",name:"Sora",owner:"OpenAI · США",desc:"Реалистичное видео из текстового описания.",vpn:"yes",tier:"paid",price:"В подписках OpenAI",url:"https://sora.com"},
+
+  {cat:"Код",name:"GitHub Copilot",owner:"GitHub · США",desc:"Подсказки и автодополнение кода прямо в редакторе.",vpn:"yes",tier:"freemium",price:"Бесплатный лимит · от ≈ $10/мес",url:"https://github.com/features/copilot"},
+  {cat:"Код",name:"Cursor",owner:"Anysphere · США",desc:"Редактор кода со встроенным ИИ-ассистентом.",vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://cursor.com"}
+];
+
+const CATS = ["Все","Текст","Поиск","Картинки","Презентации","Музыка","Видео","Код"];
+const VPN = {no:["b-vpn-no","Без VPN"], yes:["b-vpn-yes","Нужен VPN"], part:["b-vpn-part","Частично"]};
+const TIER = {free:["b-free","Бесплатно"], freemium:["b-freemium","Есть free-лимит"], paid:["b-paid","Платно"]};
+
+let active="Все", onlyNoVpn=false, onlyFree=false;
+
+// build category chips
+const catsEl=document.getElementById("cats");
+CATS.forEach(c=>{
+  const b=document.createElement("button");
+  b.className="cat";b.textContent=c;b.setAttribute("aria-pressed",c==="Все");
+  b.onclick=()=>{active=c;[...catsEl.children].forEach(x=>x.setAttribute("aria-pressed",x.textContent===c));render();};
+  catsEl.appendChild(b);
+});
+
+function bindToggle(id,setter){
+  const el=document.getElementById(id);
+  el.onchange=()=>{setter(el.checked);el.closest(".toggle").dataset.on=el.checked;render();};
+}
+bindToggle("novpn",v=>onlyNoVpn=v);
+bindToggle("free",v=>onlyFree=v);
+
+const secWrap=document.getElementById("sections");
+const emptyEl=document.getElementById("empty");
+
+function card(t){
+  const v=VPN[t.vpn], tr=TIER[t.tier];
+  const free = t.tier!=="paid";
+  const noVpn = t.vpn==="no";
+  const hide = (onlyNoVpn&&!noVpn)||(onlyFree&&!free);
+  return `<article class="card${hide?' hidden':''}">
+    <div class="card-top"><div><div class="name">${t.name}</div><div class="owner">${t.owner}</div></div></div>
+    <div class="desc">${t.desc}</div>
+    <div class="badges"><span class="b ${v[0]}">${v[1]}</span><span class="b ${tr[0]}">${tr[1]}</span></div>
+    <div class="price">${t.price}</div>
+    <a class="go" href="${t.url}" target="_blank" rel="noopener">Открыть →</a>
+  </article>`;
+}
+
+function render(){
+  const cats = active==="Все" ? CATS.slice(1) : [active];
+  let html="", total=0, n=0;
+  cats.forEach(c=>{
+    const items=TOOLS.filter(t=>t.cat===c);
+    const visible=items.filter(t=>{
+      const free=t.tier!=="paid", noVpn=t.vpn==="no";
+      return !((onlyNoVpn&&!noVpn)||(onlyFree&&!free));
+    });
+    if(visible.length===0) return;
+    n++;total+=visible.length;
+    html+=`<section class="sec"><div class="sec-head">
+      <span class="sec-num">${String(n).padStart(2,"0")}</span>
+      <h2 class="sec-title">${c}</h2>
+      <span class="sec-count">${visible.length} ${plural(visible.length)}</span></div>
+      <div class="grid">${visible.map(card).join("")}</div></section>`;
+  });
+  secWrap.innerHTML=html;
+  emptyEl.style.display = total===0 ? "block":"none";
+}
+function plural(n){const a=n%10,b=n%100;if(a===1&&b!==11)return"инструмент";if(a>=2&&a<=4&&(b<10||b>=20))return"инструмента";return"инструментов";}
+render();
+</script>
+</body>
+</html>
