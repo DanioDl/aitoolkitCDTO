@@ -101,6 +101,9 @@
   .sec-num{font-family:var(--mono);color:var(--kit-orange);font-size:13px;font-weight:700}
   .sec-title{font-size:20px;font-weight:800;letter-spacing:-.01em}
   .sec-count{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:auto}
+  .sec-example{font-size:13.5px;color:var(--muted);background:var(--kit-blue-light);
+    border-left:3px solid var(--kit-blue);border-radius:8px;padding:11px 14px;
+    margin-bottom:16px;line-height:1.6}
 
   /* GRID & CARDS */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:14px}
@@ -189,7 +192,7 @@
   <div class="wrap inner">
     <div class="cats" id="cats"></div>
     <div class="toggles">
-      <label class="toggle" data-on="false"><input type="checkbox" id="novpn"> Только без VPN</label>
+      <label class="toggle" data-on="false"><input type="checkbox" id="novpn"> Работает только с VPN</label>
       <label class="toggle" data-on="false"><input type="checkbox" id="free"> Есть бесплатный доступ</label>
     </div>
   </div>
@@ -214,38 +217,31 @@
 const TOOLS=[
   {cat:"Текст",name:"GigaChat",owner:"Сбер · РФ",vpn:"no",tier:"freemium",
    desc:"Тексты, ответы, код и картинки. Заточен под русский язык и корпоративные задачи.",
-   price:"Бесплатно ~1000 запросов/мес · далее платные пакеты",url:"https://giga.chat",
-   example:"Написать деловое письмо, составить служебную записку или шаблон договора, сформулировать тезисы к совещанию."},
+   price:"Бесплатно ~1000 запросов/мес · далее платные пакеты",url:"https://giga.chat"},
 
   {cat:"Текст",name:"YandexGPT / Алиса",owner:"Яндекс · РФ",vpn:"no",tier:"freemium",
    desc:"Помощник для текстов, переводов и быстрых ответов в экосистеме Яндекса.",
-   price:"Бесплатно · расширенно в подписке Яндекс Плюс",url:"https://ya.ru/alisa",
-   example:"Перевести документ, написать саммари встречи, сформулировать пост для корпоративного канала."},
+   price:"Бесплатно · расширенно в подписке Яндекс Плюс",url:"https://ya.ru/alisa"},
 
   {cat:"Текст",name:"DeepSeek",owner:"DeepSeek · КНР",vpn:"part",tier:"free",
    desc:"Сильный в рассуждениях и длинных ответах. Русский интерфейс, бесплатный.",
-   price:"Бесплатно · бывают перебои с доступом из РФ",url:"https://www.deepseek.com",
-   example:"Разобрать сложную задачу по шагам, написать или отладить код, составить развёрнутый анализ с аргументами за и против."},
+   price:"Бесплатно · бывают перебои с доступом из РФ",url:"https://www.deepseek.com"},
 
   {cat:"Текст",name:"Qwen",owner:"Alibaba · КНР",vpn:"no",tier:"free",
    desc:"Многоязычная модель для текста и кода. Работает из РФ напрямую.",
-   price:"Бесплатно",url:"https://chat.qwen.ai",
-   example:"Перевести текст с/на китайский или английский, написать скрипт, объяснить техническую концепцию простыми словами."},
+   price:"Бесплатно",url:"https://chat.qwen.ai"},
 
   {cat:"Текст",name:"Le Chat",owner:"Mistral · ЕС",vpn:"no",tier:"freemium",
    desc:"Быстрый европейский ассистент для текстов и работы с документами.",
-   price:"Бесплатный чат · платные тарифы для команд",url:"https://chat.mistral.ai",
-   example:"Набросать черновик статьи или инструкции, задать вопрос по загруженному PDF, переформулировать текст в нужном тоне."},
+   price:"Бесплатный чат · платные тарифы для команд",url:"https://chat.mistral.ai"},
 
   {cat:"Текст",name:"ChatGPT",owner:"OpenAI · США",vpn:"yes",tier:"freemium",
    desc:"Универсальная модель для текста, анализа, кода и генерации изображений.",
-   price:"Бесплатно с лимитами · Plus ≈ $20/мес",url:"https://chat.openai.com",
-   example:"Написать продающий текст, структурировать брифинг, сравнить конкурентов, сгенерировать иллюстрацию к презентации."},
+   price:"Бесплатно с лимитами · Plus ≈ $20/мес",url:"https://chat.openai.com"},
 
   {cat:"Текст",name:"Claude",owner:"Anthropic · США",vpn:"yes",tier:"freemium",
    desc:"Сильный в длинных текстах и аккуратном анализе больших документов.",
-   price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://claude.ai",
-   example:"Загрузить отчёт и выделить ключевые выводы, написать технический документ, разобрать договор на предмет рисков."},
+   price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://claude.ai"},
 
   {cat:"Поиск",name:"Яндекс Нейро",owner:"Яндекс · РФ",vpn:"no",tier:"free",
    desc:"Ответы с источниками прямо в поиске Яндекса, без регистрации и настроек.",
@@ -357,6 +353,11 @@ const CATS=["Все","Текст","Поиск","Картинки","Презен�
 const VPN={no:["b-vpn-no","Без VPN"],yes:["b-vpn-yes","Работает только с VPN"],part:["b-vpn-part","Частично"]};
 const TIER={free:["b-free","Бесплатно"],freemium:["b-freemium","Есть free-лимит"],paid:["b-paid","Только платно"]};
 
+// Общий пример применения для категорий, где инструменты схожи по задачам
+const SEC_EXAMPLES={
+  "Текст":"Все текстовые модели решают схожие задачи: написать письмо, составить отчёт или презентацию, перевести документ, ответить на вопрос, сгенерировать шаблон. Разница — в языке интерфейса, качестве русского, доступности из РФ и лимитах бесплатного тарифа."
+};
+
 let active="Все",onlyNoVpn=false,onlyFree=false;
 
 const catsEl=document.getElementById("cats");
@@ -379,7 +380,7 @@ const emptyEl=document.getElementById("empty");
 
 function card(t,uid){
   const v=VPN[t.vpn],tr=TIER[t.tier];
-  const hide=(onlyNoVpn&&t.vpn!=="no")||(onlyFree&&t.tier==="paid");
+  const hide=(onlyNoVpn&&t.vpn!=="yes")||(onlyFree&&t.tier==="paid");
   return `<article class="card${hide?" hidden":""}">
     <div class="name">${t.name}</div>
     <div class="owner">${t.owner}</div>
@@ -403,13 +404,15 @@ function render(){
   const cats=active==="Все"?CATS.slice(1):[active];
   let html="",total=0,n=0;
   cats.forEach(c=>{
-    const visible=TOOLS.filter(t=>t.cat===c&&!((onlyNoVpn&&t.vpn!=="no")||(onlyFree&&t.tier==="paid")));
+    const visible=TOOLS.filter(t=>t.cat===c&&!((onlyNoVpn&&t.vpn!=="yes")||(onlyFree&&t.tier==="paid")));
     if(!visible.length)return;
     n++;total+=visible.length;
+    const secEx=SEC_EXAMPLES[c]?`<div class="sec-example">${SEC_EXAMPLES[c]}</div>`:"";
     html+=`<section class="sec"><div class="sec-head">
       <span class="sec-num">${String(n).padStart(2,"0")}</span>
       <h2 class="sec-title">${c}</h2>
       <span class="sec-count">${visible.length} ${plural(visible.length)}</span></div>
+      ${secEx}
       <div class="grid">${visible.map((t,i)=>card(t,c+i)).join("")}</div></section>`;
   });
   secWrap.innerHTML=html;
