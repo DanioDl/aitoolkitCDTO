@@ -3,144 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Нейросети для работы — внутренний гид</title>
+<title>ИИ-инструменты — внутренний гид КИТ</title>
 <style>
   :root{
-    --ink:#12132B; --ink-soft:#23254A; --paper:#F4F5F9; --surface:#FFFFFF;
-    --magenta:#E6007E; --violet:#4B3BEE; --line:#E3E5EE;
-    --text:#1A1B2E; --muted:#6B6E86;
-    --ok-bg:#E7F7EE; --ok-fg:#0B7A43;
-    --warn-bg:#FFF1E6; --warn-fg:#C2410C;
-    --part-bg:#FFF8E1; --part-fg:#8A6400;
-    --free-bg:#E7F7EE; --free-fg:#0B7A43;
-    --freemium-bg:#EDEBFF; --freemium-fg:#3B33C4;
-    --paid-bg:#FCE6F1; --paid-fg:#B0005F;
-    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+    --kit-blue:#0057B8; --kit-blue-dark:#003D8F; --kit-blue-light:#E8F0FB;
+    --kit-orange:#FF6B00; --kit-orange-light:#FFF0E6;
+    --ink:#0A1628; --ink-soft:#1A2A45; --paper:#F2F5FA; --surface:#FFFFFF;
+    --line:#D8E2F0; --text:#0F1E35; --muted:#5A6A82;
+    --ok-bg:#E4F4EC; --ok-fg:#0A7A42;
+    --warn-bg:#FFF0E6; --warn-fg:#C24000;
+    --part-bg:#FFF8E0; --part-fg:#8A6200;
+    --free-bg:#E4F4EC; --free-fg:#0A7A42;
+    --freemium-bg:#E8F0FB; --freemium-fg:#0057B8;
+    --paid-bg:#FFF0E6; --paid-fg:#C24000;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --radius:12px;
   }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:var(--sans);color:var(--text);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
-  /* AMBIENT BACKGROUND */
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);color:var(--text);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+  /* AMBIENT */
   .ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-  .ambient span{position:absolute;border-radius:50%;filter:blur(72px);opacity:.58;will-change:transform}
-  .ambient .a1{width:520px;height:520px;left:-130px;top:-90px;
-    background:radial-gradient(circle,rgba(230,0,126,.34),transparent 70%);animation:drift1 22s ease-in-out infinite}
-  .ambient .a2{width:560px;height:560px;right:-150px;top:34%;
-    background:radial-gradient(circle,rgba(75,59,238,.30),transparent 70%);animation:drift2 26s ease-in-out infinite}
-  .ambient .a3{width:480px;height:480px;left:26%;bottom:-170px;
-    background:radial-gradient(circle,rgba(0,176,200,.22),transparent 70%);animation:drift3 24s ease-in-out infinite}
-  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(190px,130px) scale(1.18)}}
-  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-180px,100px) scale(1.14)}}
-  @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(150px,-140px) scale(1.16)}}
-  .hero,main,footer{position:relative;z-index:1}
-  a{color:inherit}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+  .ambient span{position:absolute;border-radius:50%;filter:blur(80px);will-change:transform}
+  .ambient .a1{width:600px;height:600px;left:-180px;top:-120px;
+    background:radial-gradient(circle,rgba(0,87,184,.18),transparent 70%);
+    animation:drift1 22s ease-in-out infinite}
+  .ambient .a2{width:500px;height:500px;right:-140px;top:30%;
+    background:radial-gradient(circle,rgba(255,107,0,.12),transparent 70%);
+    animation:drift2 28s ease-in-out infinite}
+  .ambient .a3{width:460px;height:460px;left:30%;bottom:-160px;
+    background:radial-gradient(circle,rgba(0,87,184,.10),transparent 70%);
+    animation:drift3 24s ease-in-out infinite}
+  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(160px,110px) scale(1.15)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-150px,80px) scale(1.12)}}
+  @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(120px,-120px) scale(1.14)}}
+  header,main,footer{position:relative;z-index:1}
 
   /* HERO */
-  .hero{background:var(--ink);color:#fff;padding:54px 0 46px;position:relative;overflow:hidden}
+  .hero{background:linear-gradient(135deg,var(--kit-blue-dark) 0%,var(--kit-blue) 60%,#1470CC 100%);
+    color:#fff;padding:52px 0 44px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-100px;top:-100px;width:420px;height:420px;
+    background:radial-gradient(circle,rgba(255,107,0,.22),transparent 60%);pointer-events:none;
+    animation:heroGlowA 20s ease-in-out infinite}
+  .hero::before{content:"";position:absolute;left:-80px;bottom:-140px;width:360px;height:360px;
+    background:radial-gradient(circle,rgba(255,255,255,.07),transparent 65%);pointer-events:none;
+    animation:heroGlowB 26s ease-in-out infinite}
+  @keyframes heroGlowA{0%,100%{transform:translate(0,0)}50%{transform:translate(-80px,50px) scale(1.15)}}
+  @keyframes heroGlowB{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,-40px) scale(1.12)}}
   .hero .wrap{position:relative;z-index:2}
-  .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;z-index:0;
-    background:radial-gradient(circle,rgba(230,0,126,.55),transparent 62%);pointer-events:none;
-    animation:heroGlowA 18s ease-in-out infinite}
-  .hero::before{content:"";position:absolute;left:-110px;bottom:-170px;width:380px;height:380px;z-index:0;
-    background:radial-gradient(circle,rgba(75,59,238,.42),transparent 64%);pointer-events:none;
-    animation:heroGlowB 22s ease-in-out infinite}
-  @keyframes heroGlowA{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-90px,60px) scale(1.18)}}
-  @keyframes heroGlowB{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(80px,-50px) scale(1.2)}}
-  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    color:#A9ACD8;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--magenta);display:inline-block}
-  h1{font-size:clamp(30px,5vw,52px);line-height:1.05;margin:18px 0 14px;font-weight:800;letter-spacing:-.02em;max-width:18ch}
-  h1 .pink{color:var(--magenta)}
-  .lede{font-size:17px;color:#C9CBE6;max-width:62ch;margin:0}
+
+  .kit-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:rgba(255,255,255,.85);margin-bottom:20px}
+  .kit-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--kit-orange);flex-shrink:0}
+
+  h1{font-size:clamp(28px,4.5vw,50px);line-height:1.06;margin-bottom:12px;
+    font-weight:800;letter-spacing:-.02em;max-width:20ch}
+  h1 .accent{color:var(--kit-orange)}
+  .lede{font-size:16px;color:rgba(255,255,255,.78);max-width:58ch}
 
   /* LEGEND */
-  .legend{margin-top:26px}
-  .legend-title{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7B7EA8;margin-bottom:10px}
-  .legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;max-width:520px}
+  .legend{margin-top:30px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+    border-radius:var(--radius);padding:20px 22px}
+  .legend-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    color:rgba(255,255,255,.5);margin-bottom:14px}
+  .legend-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 24px}
   .legend-item{display:flex;gap:9px;align-items:flex-start}
-  .sw{width:11px;height:11px;border-radius:3px;display:inline-block;flex-shrink:0;margin-top:3px}
-  .legend-label{font-size:13px;color:#E6E7F5;font-weight:600;line-height:1.2}
-  .legend-sub{font-size:12px;color:#9799BE;margin-top:1px}
+  .lsw{width:10px;height:10px;border-radius:3px;flex-shrink:0;margin-top:4px}
+  .ll{font-size:13px;color:#fff;font-weight:600;line-height:1.2}
+  .ls{font-size:11.5px;color:rgba(255,255,255,.55);margin-top:2px}
 
-  /* FILTER BAR */
-  .filters{position:sticky;top:0;z-index:20;background:rgba(244,245,249,.92);
-    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-  .filters .inner{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:14px 0}
-  .cats{display:flex;gap:7px;flex-wrap:wrap}
-  .cat{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;border:1px solid var(--line);
-    background:var(--surface);border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--ink-soft);
-    transition:all .15s}
-  .cat:hover{border-color:var(--magenta)}
-  .cat[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  /* FILTERS */
+  .filters{position:sticky;top:0;z-index:20;
+    background:rgba(242,245,250,.94);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line)}
+  .filters .inner{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:13px 0}
+  .cats{display:flex;gap:6px;flex-wrap:wrap}
+  .cat{font-family:var(--mono);font-size:12px;border:1.5px solid var(--line);
+    background:var(--surface);border-radius:999px;padding:7px 13px;cursor:pointer;
+    color:var(--muted);transition:all .15s;font-weight:500}
+  .cat:hover{border-color:var(--kit-blue);color:var(--kit-blue)}
+  .cat[aria-pressed="true"]{background:var(--kit-blue);color:#fff;border-color:var(--kit-blue)}
   .toggles{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
-  .toggle{display:flex;gap:8px;align-items:center;font-size:13px;background:var(--surface);
-    border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;user-select:none}
-  .toggle input{accent-color:var(--magenta);width:16px;height:16px;margin:0}
-  .toggle[data-on="true"]{border-color:var(--magenta);color:var(--magenta)}
+  .toggle{display:flex;gap:7px;align-items:center;font-size:13px;background:var(--surface);
+    border:1.5px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;user-select:none;color:var(--muted)}
+  .toggle input{accent-color:var(--kit-blue);width:15px;height:15px;margin:0}
+  .toggle[data-on="true"]{border-color:var(--kit-blue);color:var(--kit-blue);background:var(--kit-blue-light)}
 
-  /* SECTIONS */
-  main{padding:30px 0 10px}
-  .sec{margin:34px 0}
-  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;border-bottom:2px solid var(--ink);padding-bottom:10px}
-  .sec-num{font-family:var(--mono);color:var(--magenta);font-size:14px;font-weight:600}
-  .sec-title{font-size:21px;font-weight:800;letter-spacing:-.01em;margin:0}
+  /* MAIN */
+  main{padding:28px 0 10px}
+  .sec{margin:32px 0}
+  .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;
+    padding-bottom:10px;border-bottom:2px solid var(--kit-blue)}
+  .sec-num{font-family:var(--mono);color:var(--kit-orange);font-size:13px;font-weight:700}
+  .sec-title{font-size:20px;font-weight:800;letter-spacing:-.01em}
   .sec-count{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:auto}
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;
-    display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s,border-color .15s}
-  .card:hover{transform:translateY(-2px);box-shadow:0 10px 26px -16px rgba(18,19,43,.4);border-color:#cfd2e2}
+  /* GRID & CARDS */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:14px}
+  .card{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);
+    padding:18px 18px 15px;display:flex;flex-direction:column;
+    transition:transform .15s,box-shadow .15s,border-color .15s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 12px 28px -14px rgba(0,61,143,.22);
+    border-color:var(--kit-blue)}
   .card.hidden{display:none}
-  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-  .name{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .name{font-size:16.5px;font-weight:700;letter-spacing:-.01em}
   .owner{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px}
-  .desc{font-size:14px;color:#3a3c54;margin:11px 0 14px;flex:1}
-  .badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}
-  .b{font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:7px;font-family:var(--mono);letter-spacing:.01em}
+  .desc{font-size:13.5px;color:#2E3D55;margin:10px 0 13px;flex:1}
+  .badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .b{font-size:11px;font-weight:700;padding:4px 9px;border-radius:6px;
+    font-family:var(--mono);letter-spacing:.01em}
   .b-vpn-no{background:var(--ok-bg);color:var(--ok-fg)}
   .b-vpn-yes{background:var(--warn-bg);color:var(--warn-fg)}
   .b-vpn-part{background:var(--part-bg);color:var(--part-fg)}
   .b-free{background:var(--free-bg);color:var(--free-fg)}
   .b-freemium{background:var(--freemium-bg);color:var(--freemium-fg)}
   .b-paid{background:var(--paid-bg);color:var(--paid-fg)}
-  .price{font-size:12.5px;color:var(--muted);margin-bottom:13px}
-  .price b{color:var(--text);font-weight:600}
-  .go{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--ink);text-decoration:none;
-    display:inline-flex;gap:6px;align-items:center;align-self:flex-start;border-bottom:2px solid var(--magenta);padding-bottom:1px}
-  .go:hover{color:var(--magenta)}
+  .price{font-size:12px;color:var(--muted);margin-bottom:12px}
+  .go{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--kit-blue);
+    display:inline-flex;gap:5px;align-items:center;align-self:flex-start;
+    border-bottom:2px solid var(--kit-orange);padding-bottom:1px}
+  .go:hover{color:var(--kit-orange)}
 
   /* ACCORDION */
-  .ex-btn{width:100%;background:none;border:none;border-top:1px solid var(--line);
+  .ex-btn{width:100%;background:none;border:none;border-top:1.5px solid var(--line);
     padding:10px 0 0;margin-top:12px;cursor:pointer;display:flex;align-items:center;
     gap:7px;font-size:12.5px;color:var(--muted);font-family:var(--sans);text-align:left}
-  .ex-btn:hover{color:var(--magenta)}
-  .ex-arr{font-size:10px;transition:transform .2s;display:inline-block;line-height:1}
+  .ex-btn:hover{color:var(--kit-blue)}
+  .ex-arr{font-size:9px;transition:transform .2s;display:inline-block;line-height:1;color:var(--kit-orange)}
   .ex-btn[aria-expanded="true"] .ex-arr{transform:rotate(90deg)}
-  .ex-body{display:none;font-size:13px;color:#3a3c54;background:var(--paper);
-    border-radius:9px;padding:11px 13px;margin-top:8px;line-height:1.6}
+  .ex-body{display:none;font-size:13px;color:#2E3D55;background:var(--kit-blue-light);
+    border-radius:8px;padding:11px 13px;margin-top:8px;line-height:1.6;
+    border-left:3px solid var(--kit-blue)}
   .ex-body.open{display:block}
 
   .empty{text-align:center;color:var(--muted);padding:50px 0;font-family:var(--mono);font-size:14px;display:none}
 
-  /* SECURITY CALLOUT */
-  .note{background:var(--ink-soft);color:#E6E7F5;border-radius:16px;padding:26px 28px;margin:40px 0 10px;
-    border-left:4px solid var(--magenta)}
-  .note h3{margin:0 0 10px;font-size:17px;color:#fff}
-  .note p{margin:0 0 8px;font-size:14.5px;color:#C9CBE6}
+  /* NOTE */
+  .note{background:var(--ink-soft);color:#D8E8F8;border-radius:var(--radius);
+    padding:24px 26px;margin:36px 0 10px;border-left:4px solid var(--kit-orange)}
+  .note h3{margin:0 0 10px;font-size:16px;color:#fff}
+  .note p{margin:0 0 8px;font-size:14px;color:#A8C0D8}
   .note p:last-child{margin-bottom:0}
   .note b{color:#fff}
 
-  footer{padding:34px 0 50px;color:var(--muted);font-size:12.5px}
-  footer .meta{font-family:var(--mono);margin-bottom:6px}
+  footer{padding:32px 0 48px;color:var(--muted);font-size:12px}
+  footer .meta{font-family:var(--mono);margin-bottom:5px}
 
-  @media (max-width:560px){
+  @media(max-width:600px){
+    .legend-grid{grid-template-columns:1fr 1fr}
     .toggles{margin-left:0;width:100%}
     .sec-count{display:none}
-    .legend-grid{grid-template-columns:1fr}
   }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-  :focus-visible{outline:3px solid var(--magenta);outline-offset:2px;border-radius:6px}
+  @media(max-width:400px){.legend-grid{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  :focus-visible{outline:3px solid var(--kit-orange);outline-offset:2px;border-radius:6px}
 </style>
 </head>
 <body>
@@ -148,18 +168,18 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow"><span class="dot"></span>Внутренний гид по нейросетям · обновлено 10.06.2026</div>
-    <h1>Какая нейросеть <span class="pink">для чего</span> — и нужен ли VPN</h1>
-    <p class="lede">Короткий навигатор по ИИ-инструментам: что они делают, есть ли бесплатный тариф и открываются ли из России напрямую. Выбирайте задачу — фильтр покажет, чем её закрыть прямо сейчас.</p>
+    <div class="kit-badge"><span class="dot"></span>Внутренний гид · КИТ · обновлено 15.06.2026</div>
+    <h1>ИИ-инструменты: <span class="accent">что делает</span> и нужен ли VPN</h1>
+    <p class="lede">Навигатор по нейросетям для сотрудников КИТ — категории, тарифы и статус доступа из России.</p>
     <div class="legend">
       <div class="legend-title">Что означают плашки</div>
       <div class="legend-grid">
-        <div class="legend-item"><span class="sw" style="background:var(--ok-fg)"></span><div><div class="legend-label">Без VPN</div><div class="legend-sub">Открывается из РФ напрямую</div></div></div>
-        <div class="legend-item"><span class="sw" style="background:var(--free-fg)"></span><div><div class="legend-label">Бесплатно</div><div class="legend-sub">Полностью бесплатный сервис</div></div></div>
-        <div class="legend-item"><span class="sw" style="background:var(--warn-fg)"></span><div><div class="legend-label">Нужен VPN</div><div class="legend-sub">Заблокирован для РФ-адресов</div></div></div>
-        <div class="legend-item"><span class="sw" style="background:var(--freemium-fg)"></span><div><div class="legend-label">Есть free-лимит</div><div class="legend-sub">Базовый доступ бесплатно, расширенный — платно</div></div></div>
-        <div class="legend-item"><span class="sw" style="background:var(--part-fg)"></span><div><div class="legend-label">Частично</div><div class="legend-sub">Бывают перебои или нестабильный доступ</div></div></div>
-        <div class="legend-item"><span class="sw" style="background:var(--paid-fg)"></span><div><div class="legend-label">Только платно</div><div class="legend-sub">Бесплатной версии нет</div></div></div>
+        <div class="legend-item"><span class="lsw" style="background:var(--ok-fg)"></span><div><div class="ll">Без VPN</div><div class="ls">Открывается из РФ напрямую</div></div></div>
+        <div class="legend-item"><span class="lsw" style="background:var(--warn-fg)"></span><div><div class="ll">Работает только с VPN</div><div class="ls">Заблокирован для РФ-адресов</div></div></div>
+        <div class="legend-item"><span class="lsw" style="background:var(--part-fg)"></span><div><div class="ll">Частично</div><div class="ls">Бывают перебои с доступом</div></div></div>
+        <div class="legend-item"><span class="lsw" style="background:var(--free-fg)"></span><div><div class="ll">Бесплатно</div><div class="ls">Полностью бесплатный сервис</div></div></div>
+        <div class="legend-item"><span class="lsw" style="background:var(--freemium-fg)"></span><div><div class="ll">Есть free-лимит</div><div class="ls">Базовое — бесплатно, расширенное — платно</div></div></div>
+        <div class="legend-item"><span class="lsw" style="background:var(--paid-fg)"></span><div><div class="ll">Только платно</div><div class="ls">Бесплатной версии нет</div></div></div>
       </div>
     </div>
   </div>
@@ -178,175 +198,178 @@
 <main class="wrap">
   <div id="sections"></div>
   <div class="empty" id="empty">Под выбранные фильтры ничего не попало. Снимите часть условий.</div>
-
   <div class="note">
     <h3>Прежде чем загружать рабочие данные</h3>
-    <p>Зарубежные сервисы обрабатывают введённое на своих серверах за пределами РФ. <b>Не вставляйте туда коммерческую, персональную или клиентскую информацию</b> без согласования с ИБ.</p>
-    <p>Для рабочих задач с чувствительными данными безопаснее российские решения — <b>GigaChat</b> и <b>YandexGPT</b>: данные остаются в РФ-контуре, оплата рублями, есть корпоративные тарифы и API.</p>
+    <p>Зарубежные сервисы обрабатывают данные на серверах за пределами РФ. <b>Не вставляйте коммерческую, персональную или клиентскую информацию</b> без согласования с ИБ.</p>
+    <p>Для задач с чувствительными данными используйте российские решения — <b>GigaChat</b> и <b>YandexGPT</b>: РФ-контур, рублёвая оплата, корпоративные тарифы и API.</p>
   </div>
 </main>
 
 <footer class="wrap">
-  <div class="meta">v2 · данные о доступе и тарифах актуальны на 10.06.2026 и могут меняться</div>
-  <div>Цены — ориентир для сравнения, не оферта. Статус VPN периодически меняется: блокировки и доступность сервисов нестабильны.</div>
+  <div class="meta">v3 · данные актуальны на 15.06.2026 и могут меняться</div>
+  <div>Цены — ориентир для сравнения, не оферта. Статус VPN нестабилен — блокировки меняются.</div>
 </footer>
 
 <script>
-const TOOLS = [
-  // cat, name, owner, desc, vpn: no|yes|part, tier: free|freemium|paid, price, url, example
-  {cat:"Текст",name:"GigaChat",owner:"Сбер · РФ",
-   desc:"Тексты, ответы на вопросы, код и картинки. Заточен под русский язык.",
-   vpn:"no",tier:"freemium",price:"Бесплатно ~1000 запросов/мес · далее платные пакеты",url:"https://giga.chat",
-   example:"Написать деловое письмо или служебную записку, составить шаблон договора, сгенерировать тезисы для совещания, ответить на типовые вопросы клиентов."},
+const TOOLS=[
+  {cat:"Текст",name:"GigaChat",owner:"Сбер · РФ",vpn:"no",tier:"freemium",
+   desc:"Тексты, ответы, код и картинки. Заточен под русский язык и корпоративные задачи.",
+   price:"Бесплатно ~1000 запросов/мес · далее платные пакеты",url:"https://giga.chat",
+   example:"Написать деловое письмо, составить служебную записку или шаблон договора, сформулировать тезисы к совещанию."},
 
-  {cat:"Текст",name:"YandexGPT / Алиса",owner:"Яндекс · РФ",
-   desc:"Помощник для текстов, переводов и быстрых ответов внутри сервисов Яндекса.",
-   vpn:"no",tier:"freemium",price:"Бесплатно · расширенно в подписке Яндекс Плюс",url:"https://ya.ru/alisa",
-   example:"Быстро перевести документ, составить краткое саммари встречи, сформулировать пост для корпоративного канала."},
+  {cat:"Текст",name:"YandexGPT / Алиса",owner:"Яндекс · РФ",vpn:"no",tier:"freemium",
+   desc:"Помощник для текстов, переводов и быстрых ответов в экосистеме Яндекса.",
+   price:"Бесплатно · расширенно в подписке Яндекс Плюс",url:"https://ya.ru/alisa",
+   example:"Перевести документ, написать саммари встречи, сформулировать пост для корпоративного канала."},
 
-  {cat:"Текст",name:"DeepSeek",owner:"DeepSeek · КНР",
-   desc:"Сильный в рассуждениях, коде и длинных ответах. Русский интерфейс.",
-   vpn:"part",tier:"free",price:"Бесплатно на сайте · бывают перебои с доступом из РФ",url:"https://www.deepseek.com",
-   example:"Разобрать сложную задачу по шагам, написать или отладить код, составить подробный анализ ситуации с аргументами за и против."},
+  {cat:"Текст",name:"DeepSeek",owner:"DeepSeek · КНР",vpn:"part",tier:"free",
+   desc:"Сильный в рассуждениях и длинных ответах. Русский интерфейс, бесплатный.",
+   price:"Бесплатно · бывают перебои с доступом из РФ",url:"https://www.deepseek.com",
+   example:"Разобрать сложную задачу по шагам, написать или отладить код, составить развёрнутый анализ с аргументами за и против."},
 
-  {cat:"Текст",name:"Qwen",owner:"Alibaba · КНР",
-   desc:"Многоязычная модель для текста и кода, работает напрямую.",
-   vpn:"no",tier:"free",price:"Бесплатно",url:"https://chat.qwen.ai",
-   example:"Перевести текст с/на китайский или английский, написать скрипт на Python, объяснить техническую концепцию простым языком."},
+  {cat:"Текст",name:"Qwen",owner:"Alibaba · КНР",vpn:"no",tier:"free",
+   desc:"Многоязычная модель для текста и кода. Работает из РФ напрямую.",
+   price:"Бесплатно",url:"https://chat.qwen.ai",
+   example:"Перевести текст с/на китайский или английский, написать скрипт, объяснить техническую концепцию простыми словами."},
 
-  {cat:"Текст",name:"Le Chat",owner:"Mistral · ЕС",
-   desc:"Быстрый чат-ассистент для текстов и базовой работы с документами.",
-   vpn:"no",tier:"freemium",price:"Бесплатный чат · платные тарифы для команд",url:"https://chat.mistral.ai",
-   example:"Набросать черновик статьи или инструкции, задать вопрос по загруженному PDF, быстро переформулировать текст в нужном тоне."},
+  {cat:"Текст",name:"Le Chat",owner:"Mistral · ЕС",vpn:"no",tier:"freemium",
+   desc:"Быстрый европейский ассистент для текстов и работы с документами.",
+   price:"Бесплатный чат · платные тарифы для команд",url:"https://chat.mistral.ai",
+   example:"Набросать черновик статьи или инструкции, задать вопрос по загруженному PDF, переформулировать текст в нужном тоне."},
 
-  {cat:"Текст",name:"ChatGPT",owner:"OpenAI · США",
-   desc:"Универсальная модель для текста, анализа, кода и картинок.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · Plus ≈ $20/мес",url:"https://chat.openai.com",
-   example:"Написать продающий текст, структурировать брифинг, создать таблицу сравнения конкурентов, сгенерировать иллюстрацию к презентации."},
+  {cat:"Текст",name:"ChatGPT",owner:"OpenAI · США",vpn:"yes",tier:"freemium",
+   desc:"Универсальная модель для текста, анализа, кода и генерации изображений.",
+   price:"Бесплатно с лимитами · Plus ≈ $20/мес",url:"https://chat.openai.com",
+   example:"Написать продающий текст, структурировать брифинг, сравнить конкурентов, сгенерировать иллюстрацию к презентации."},
 
-  {cat:"Текст",name:"Claude",owner:"Anthropic · США",
-   desc:"Длинные тексты, аккуратный анализ документов и код.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://claude.ai",
-   example:"Загрузить большой отчёт и попросить выделить ключевые выводы, написать подробный технический документ, разобрать договор на предмет рисков."},
+  {cat:"Текст",name:"Claude",owner:"Anthropic · США",vpn:"yes",tier:"freemium",
+   desc:"Сильный в длинных текстах и аккуратном анализе больших документов.",
+   price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://claude.ai",
+   example:"Загрузить отчёт и выделить ключевые выводы, написать технический документ, разобрать договор на предмет рисков."},
 
-  {cat:"Поиск",name:"Perplexity",owner:"Perplexity · США",
-   desc:"Поисковик-ассистент: отвечает с ссылками на источники.",
-   vpn:"part",tier:"freemium",price:"Бесплатно · Pro ≈ $20/мес",url:"https://www.perplexity.ai",
-   example:"Быстро найти актуальные данные по рынку с источниками, получить обзор новостей по теме, сравнить характеристики продуктов с ссылками на первоисточники."},
+  {cat:"Поиск",name:"Яндекс Нейро",owner:"Яндекс · РФ",vpn:"no",tier:"free",
+   desc:"Ответы с источниками прямо в поиске Яндекса, без регистрации и настроек.",
+   price:"Бесплатно",url:"https://ya.ru",
+   example:"Задать вопрос и получить суммарный ответ со ссылками — без необходимости открывать десятки сайтов вручную."},
 
-  {cat:"Поиск",name:"Яндекс Нейро",owner:"Яндекс · РФ",
-   desc:"Ответы с источниками прямо в поиске Яндекса, без настроек.",
-   vpn:"no",tier:"free",price:"Бесплатно",url:"https://ya.ru",
-   example:"Задать вопрос и сразу получить суммарный ответ со ссылками — без необходимости открывать несколько сайтов вручную."},
+  {cat:"Поиск",name:"Perplexity",owner:"Perplexity · США",vpn:"part",tier:"freemium",
+   desc:"Поисковик-ассистент с ответами и ссылками на первоисточники в реальном времени.",
+   price:"Бесплатно · Pro ≈ $20/мес",url:"https://www.perplexity.ai",
+   example:"Собрать актуальную аналитику по рынку с источниками, быстро изучить новый сегмент перед встречей, сравнить характеристики продуктов."},
 
-  {cat:"Картинки",name:"Kandinsky",owner:"Сбер · РФ",
+  {cat:"Картинки",name:"Kandinsky",owner:"Сбер · РФ",vpn:"no",tier:"free",
    desc:"Генерация изображений по описанию. Хорошо понимает русские промты.",
-   vpn:"no",tier:"free",price:"Бесплатно (FusionBrain / Telegram-бот)",url:"https://fusionbrain.ai",
-   example:"Создать иллюстрацию для презентации, сгенерировать обложку для внутреннего документа или корпоративной рассылки."},
+   price:"Бесплатно (FusionBrain / Telegram-бот)",url:"https://fusionbrain.ai",
+   example:"Создать иллюстрацию для презентации или обложку для корпоративной рассылки."},
 
-  {cat:"Картинки",name:"Шедеврум",owner:"Яндекс · РФ",
+  {cat:"Картинки",name:"Шедеврум",owner:"Яндекс · РФ",vpn:"no",tier:"free",
    desc:"Картинки, аватарки и стикеры в мобильном приложении.",
-   vpn:"no",tier:"free",price:"Бесплатно",url:"https://shedevrum.ai",
-   example:"Сделать кастомный аватар для рабочего чата, создать стикер для корпоративного Telegram, быстро нарисовать образ персонажа для брифа."},
+   price:"Бесплатно",url:"https://shedevrum.ai",
+   example:"Сделать кастомный аватар для рабочего чата, создать стикер для корпоративного Telegram."},
 
-  {cat:"Картинки",name:"Midjourney",owner:"Midjourney · США",
-   desc:"Топ по качеству и стилю изображений для дизайна и креатива.",
-   vpn:"yes",tier:"paid",price:"От ≈ $10/мес",url:"https://www.midjourney.com",
-   example:"Создать концепт-арт для маркетинговой кампании, сгенерировать фотореалистичные визуализации продукта, нарисовать баннер в заданном стиле."},
+  {cat:"Картинки",name:"Midjourney",owner:"Midjourney · США",vpn:"yes",tier:"paid",
+   desc:"Топ по качеству и стилю — для дизайна и визуального контента.",
+   price:"От ≈ $10/мес",url:"https://www.midjourney.com",
+   example:"Создать концепт-арт для маркетинговой кампании, сгенерировать баннер или визуализацию продукта в заданном стиле."},
 
-  {cat:"Картинки",name:"FLUX",owner:"Black Forest Labs · ЕС",
-   desc:"Фотореалистичная генерация изображений, популярна у дизайнеров.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · платно за объём",url:"https://blackforestlabs.io",
-   example:"Сгенерировать фотореалистичное изображение товара или интерьера, создать портрет персонажа для презентации или сайта."},
+  {cat:"Картинки",name:"FLUX",owner:"Black Forest Labs · ЕС",vpn:"yes",tier:"freemium",
+   desc:"Фотореалистичная генерация, популярна у дизайнеров.",
+   price:"Бесплатно с лимитами · платно за объём",url:"https://blackforestlabs.io",
+   example:"Сгенерировать фотореалистичное изображение товара, интерьера или портрета персонажа."},
 
-  {cat:"Презентации",name:"Gamma",owner:"Gamma · США",
+  {cat:"Презентации",name:"Gamma",owner:"Gamma · США",vpn:"yes",tier:"freemium",
    desc:"Делает презентации, лендинги и документы из текстового запроса.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитом кредитов · платно от ≈ $10/мес",url:"https://gamma.app",
-   example:"Написать тему и за минуту получить готовую структурированную презентацию с дизайном — например, 'стратегия продаж на Q3' или 'онбординг нового сотрудника'."},
+   price:"Бесплатно с лимитом кредитов · от ≈ $10/мес",url:"https://gamma.app",
+   example:"Написать тему — и за минуту получить готовую презентацию с дизайном: 'стратегия продаж на Q3' или 'онбординг нового сотрудника'."},
 
-  {cat:"Презентации",name:"Tome",owner:"Tome · США",
-   desc:"Генерация слайдов и сторителлинг-презентаций.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · платные тарифы",url:"https://tome.app",
-   example:"Сделать нарратив-презентацию для питча или отчёта, когда важна история и последовательность, а не просто слайды с данными."},
+  {cat:"Презентации",name:"Tome",owner:"Tome · США",vpn:"yes",tier:"freemium",
+   desc:"Генерация слайдов с акцентом на нарратив и сторителлинг.",
+   price:"Бесплатно с лимитами · платные тарифы",url:"https://tome.app",
+   example:"Сделать питч или отчёт, где важна история и последовательность, а не просто слайды с данными."},
 
-  {cat:"Музыка",name:"Suno",owner:"Suno · США",
+  {cat:"Презентации",name:"v0",owner:"Vercel · США",vpn:"yes",tier:"freemium",
+   desc:"Генерирует веб-интерфейсы и интерактивные прототипы по текстовому описанию.",
+   price:"Бесплатно с лимитами · платные тарифы",url:"https://v0.dev",
+   example:"Быстро собрать прототип внутреннего инструмента, лендинга или дашборда без верстальщика — описал словами, получил рабочий код."},
+
+  {cat:"Презентации",name:"Base44",owner:"Base44 · США",vpn:"yes",tier:"freemium",
+   desc:"Создаёт полноценные веб-приложения из описания на естественном языке.",
+   price:"Бесплатно с лимитами · платные тарифы",url:"https://base44.com",
+   example:"Собрать простой внутренний инструмент или форму для сбора данных без программиста — описал задачу, получил рабочее приложение."},
+
+  {cat:"Музыка",name:"Suno",owner:"Suno · США",vpn:"yes",tier:"freemium",
    desc:"Создаёт музыку с вокалом и текстом по описанию.",
-   vpn:"yes",tier:"freemium",price:"Бесплатные кредиты · Pro от ≈ $10/мес",url:"https://suno.com",
-   example:"Написать корпоративный джингл, создать фоновую музыку для видео или мероприятия, сгенерировать заглушку для рекламного ролика."},
+   price:"Бесплатные кредиты · Pro от ≈ $10/мес",url:"https://suno.com",
+   example:"Написать корпоративный джингл, создать фоновую музыку для видео или мероприятия."},
 
-  {cat:"Музыка",name:"Udio",owner:"Udio · США",
-   desc:"Генерация треков и музыкальных набросков высокого качества.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · платно за объём",url:"https://www.udio.com",
-   example:"Создать атмосферный трек для корпоративного видео, сгенерировать несколько музыкальных набросков для выбора заказчиком."},
+  {cat:"Музыка",name:"Udio",owner:"Udio · США",vpn:"yes",tier:"freemium",
+   desc:"Генерация музыкальных треков высокого качества.",
+   price:"Бесплатно с лимитами · платно за объём",url:"https://www.udio.com",
+   example:"Создать атмосферный трек для корпоративного видео, сгенерировать несколько вариантов фоновой музыки на выбор."},
 
-  {cat:"Видео",name:"Kling",owner:"Kuaishou · КНР",
+  {cat:"Видео",name:"Kling",owner:"Kuaishou · КНР",vpn:"no",tier:"freemium",
    desc:"Видео из текста или фото. Работает из РФ напрямую.",
-   vpn:"no",tier:"freemium",price:"Бесплатные кредиты · платно за объём",url:"https://klingai.com",
-   example:"Оживить статичное фото для соцсетей, сгенерировать короткий видеоролик по описанию для презентации или сторис."},
+   price:"Бесплатные кредиты · платно за объём",url:"https://klingai.com",
+   example:"Оживить статичное фото для соцсетей, сгенерировать короткий ролик для презентации или сторис."},
 
-  {cat:"Видео",name:"Runway",owner:"Runway · США",
+  {cat:"Видео",name:"Runway",owner:"Runway · США",vpn:"yes",tier:"freemium",
    desc:"Видеогенерация и монтаж с ИИ, инструменты для продакшена.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · от ≈ $15/мес",url:"https://runwayml.com",
-   example:"Убрать фон с видео без хромакея, создать анимированный ролик из набора изображений, сгенерировать короткое промо-видео."},
+   price:"Бесплатно с лимитами · от ≈ $15/мес",url:"https://runwayml.com",
+   example:"Убрать фон с видео без хромакея, создать анимированный ролик из изображений, сделать промо-видео."},
 
-  {cat:"Видео",name:"Sora",owner:"OpenAI · США",
-   desc:"Реалистичное видео из текстового описания.",
-   vpn:"yes",tier:"paid",price:"В подписках OpenAI",url:"https://sora.com",
-   example:"Создать реалистичный видеоролик по сценарию — например, для внешней рекламы или концептуального показа продукта."},
+  {cat:"Видео",name:"Sora",owner:"OpenAI · США",vpn:"yes",tier:"paid",
+   desc:"Реалистичное видео из текстового описания от OpenAI.",
+   price:"В подписках OpenAI",url:"https://sora.com",
+   example:"Создать реалистичный видеоролик по сценарию для внешней рекламы или концептуального показа продукта."},
 
-  {cat:"Аналитика",name:"Julius AI",owner:"Julius · США",
-   desc:"Анализ данных в формате чата: загружаешь таблицу — задаёшь вопросы.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://julius.ai",
-   example:"Загрузить Excel с продажами и спросить 'какой регион просел в марте', построить график без навыков Excel, найти аномалии в данных."},
+  {cat:"Аналитика",name:"Julius AI",owner:"Julius · США",vpn:"yes",tier:"freemium",
+   desc:"Анализ данных в формате чата: загружаешь таблицу — задаёшь вопросы на русском.",
+   price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://julius.ai",
+   example:"Загрузить Excel с продажами и спросить 'какой регион просел в марте', построить график без навыков Excel, найти аномалии."},
 
-  {cat:"Аналитика",name:"ChatGPT + Data Analysis",owner:"OpenAI · США",
-   desc:"Встроенный режим анализа данных в ChatGPT: код и графики по вашим файлам.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · Plus ≈ $20/мес",url:"https://chat.openai.com",
-   example:"Загрузить CSV-отчёт и попросить построить диаграмму, найти топ-10 клиентов по выручке, автоматически почистить данные от дублей."},
+  {cat:"Аналитика",name:"ChatGPT + Data Analysis",owner:"OpenAI · США",vpn:"yes",tier:"freemium",
+   desc:"Встроенный режим анализа данных в ChatGPT: код, графики и выводы по вашим файлам.",
+   price:"Бесплатно с лимитами · Plus ≈ $20/мес",url:"https://chat.openai.com",
+   example:"Загрузить CSV-отчёт и попросить построить диаграмму, найти топ-10 клиентов по выручке, почистить данные от дублей."},
 
-  {cat:"Аналитика",name:"Power BI Copilot",owner:"Microsoft · США",
-   desc:"ИИ-ассистент внутри Power BI — описание дашбордов и подсказки по DAX.",
-   vpn:"yes",tier:"paid",price:"В составе Microsoft 365 Copilot",url:"https://powerbi.microsoft.com",
-   example:"Попросить Copilot объяснить аномалию на графике, автоматически написать DAX-формулу, сгенерировать текстовый вывод по дашборду для отчёта руководству."},
+  {cat:"Аналитика",name:"Power BI Copilot",owner:"Microsoft · США",vpn:"yes",tier:"paid",
+   desc:"ИИ-ассистент внутри Power BI — объяснения дашбордов и помощь с DAX.",
+   price:"В составе Microsoft 365 Copilot",url:"https://powerbi.microsoft.com",
+   example:"Попросить Copilot объяснить аномалию на графике, написать DAX-формулу, сгенерировать текстовый вывод по дашборду для отчёта руководству."},
 
-  {cat:"Аналитика",name:"Яндекс DataLens",owner:"Яндекс · РФ",
-   desc:"Визуализация и дашборды на базе данных Яндекс Облака, без кода.",
-   vpn:"no",tier:"freemium",price:"Бесплатный Community · платно в Яндекс Облаке",url:"https://datalens.yandex.ru",
-   example:"Подключить базу данных и построить дашборд KPI для руководства, визуализировать динамику продаж по месяцам, разобраться в воронке заявок."},
+  {cat:"Аналитика",name:"Яндекс DataLens",owner:"Яндекс · РФ",vpn:"no",tier:"freemium",
+   desc:"Визуализация и дашборды на базе Яндекс Облака, без программирования.",
+   price:"Бесплатный Community · платно в Яндекс Облаке",url:"https://datalens.yandex.ru",
+   example:"Подключить базу данных и построить дашборд KPI для руководства, визуализировать динамику продаж по месяцам."},
 
-  {cat:"Аналитика",name:"Perplexity (аналитика)",owner:"Perplexity · США",
-   desc:"Исследование рынка и конкурентов с источниками в реальном времени.",
-   vpn:"part",tier:"freemium",price:"Бесплатно · Pro ≈ $20/мес",url:"https://www.perplexity.ai",
-   example:"Собрать аналитику по рынку логистики за последний квартал, найти данные о конкурентах с источниками, быстро изучить новый сегмент перед встречей."},
-
-  {cat:"Код",name:"GitHub Copilot",owner:"GitHub · США",
+  {cat:"Код",name:"GitHub Copilot",owner:"GitHub · США",vpn:"yes",tier:"freemium",
    desc:"Подсказки и автодополнение кода прямо в редакторе.",
-   vpn:"yes",tier:"freemium",price:"Бесплатный лимит · от ≈ $10/мес",url:"https://github.com/features/copilot",
-   example:"Ускорить написание типовых функций, получить подсказку по незнакомому API, автоматически написать тесты к существующему коду."},
+   price:"Бесплатный лимит · от ≈ $10/мес",url:"https://github.com/features/copilot",
+   example:"Ускорить написание типовых функций, получить подсказку по незнакомому API, автоматически написать тесты к коду."},
 
-  {cat:"Код",name:"Cursor",owner:"Anysphere · США",
-   desc:"Редактор кода со встроенным ИИ-ассистентом.",
-   vpn:"yes",tier:"freemium",price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://cursor.com",
-   example:"Объяснить чужой код словами, рефакторить большой файл, добавить новую функцию в проект, описав задачу на русском."}
+  {cat:"Код",name:"Cursor",owner:"Anysphere · США",vpn:"yes",tier:"freemium",
+   desc:"Редактор кода со встроенным ИИ-ассистентом для разработчиков.",
+   price:"Бесплатно с лимитами · Pro ≈ $20/мес",url:"https://cursor.com",
+   example:"Объяснить чужой код словами, рефакторить большой файл, добавить новую функцию — описав задачу на русском."}
 ];
 
-const CATS = ["Все","Текст","Поиск","Картинки","Презентации","Аналитика","Музыка","Видео","Код"];
-const VPN = {no:["b-vpn-no","Без VPN"], yes:["b-vpn-yes","Нужен VPN"], part:["b-vpn-part","Частично"]};
-const TIER = {free:["b-free","Бесплатно"], freemium:["b-freemium","Есть free-лимит"], paid:["b-paid","Платно"]};
+const CATS=["Все","Текст","Поиск","Картинки","Презентации","Аналитика","Музыка","Видео","Код"];
+const VPN={no:["b-vpn-no","Без VPN"],yes:["b-vpn-yes","Работает только с VPN"],part:["b-vpn-part","Частично"]};
+const TIER={free:["b-free","Бесплатно"],freemium:["b-freemium","Есть free-лимит"],paid:["b-paid","Только платно"]};
 
-let active="Все", onlyNoVpn=false, onlyFree=false;
+let active="Все",onlyNoVpn=false,onlyFree=false;
 
 const catsEl=document.getElementById("cats");
 CATS.forEach(c=>{
   const b=document.createElement("button");
   b.className="cat";b.textContent=c;b.setAttribute("aria-pressed",c==="Все");
-  b.onclick=()=>{active=c;[...catsEl.children].forEach(x=>x.setAttribute("aria-pressed",x.textContent===c));render();};
+  b.onclick=()=>{active=c;[...catsEl.children].forEach(x=>x.setAttribute("aria-pressed",x.textContent===c));render()};
   catsEl.appendChild(b);
 });
 
 function bindToggle(id,setter){
   const el=document.getElementById(id);
-  el.onchange=()=>{setter(el.checked);el.closest(".toggle").dataset.on=el.checked;render();};
+  el.onchange=()=>{setter(el.checked);el.closest(".toggle").dataset.on=el.checked;render()};
 }
 bindToggle("novpn",v=>onlyNoVpn=v);
 bindToggle("free",v=>onlyFree=v);
@@ -354,42 +377,34 @@ bindToggle("free",v=>onlyFree=v);
 const secWrap=document.getElementById("sections");
 const emptyEl=document.getElementById("empty");
 
-let exOpen={};
-
 function card(t,uid){
-  const v=VPN[t.vpn], tr=TIER[t.tier];
-  const free=t.tier!=="paid", noVpn=t.vpn==="no";
-  const hide=(onlyNoVpn&&!noVpn)||(onlyFree&&!free);
-  return `<article class="card${hide?' hidden':''}">
-    <div class="card-top"><div><div class="name">${t.name}</div><div class="owner">${t.owner}</div></div></div>
+  const v=VPN[t.vpn],tr=TIER[t.tier];
+  const hide=(onlyNoVpn&&t.vpn!=="no")||(onlyFree&&t.tier==="paid");
+  return `<article class="card${hide?" hidden":""}">
+    <div class="name">${t.name}</div>
+    <div class="owner">${t.owner}</div>
     <div class="desc">${t.desc}</div>
     <div class="badges"><span class="b ${v[0]}">${v[1]}</span><span class="b ${tr[0]}">${tr[1]}</span></div>
     <div class="price">${t.price}</div>
     <a class="go" href="${t.url}" target="_blank" rel="noopener">Открыть →</a>
     ${t.example?`<button class="ex-btn" aria-expanded="false" onclick="toggleEx(this,'${uid}')">
       <span class="ex-arr">▶</span> Примеры применения
-    </button>
-    <div class="ex-body" id="ex-${uid}">${t.example}</div>`:''}
+    </button><div class="ex-body" id="ex-${uid}">${t.example}</div>`:""}
   </article>`;
 }
 
 function toggleEx(btn,uid){
-  const body=document.getElementById('ex-'+uid);
-  const open=btn.getAttribute('aria-expanded')==='true';
-  btn.setAttribute('aria-expanded',!open);
-  body.classList.toggle('open',!open);
+  const open=btn.getAttribute("aria-expanded")==="true";
+  btn.setAttribute("aria-expanded",!open);
+  document.getElementById("ex-"+uid).classList.toggle("open",!open);
 }
 
 function render(){
-  const cats=active==="Все" ? CATS.slice(1) : [active];
+  const cats=active==="Все"?CATS.slice(1):[active];
   let html="",total=0,n=0;
   cats.forEach(c=>{
-    const items=TOOLS.filter(t=>t.cat===c);
-    const visible=items.filter(t=>{
-      const free=t.tier!=="paid",noVpn=t.vpn==="no";
-      return !((onlyNoVpn&&!noVpn)||(onlyFree&&!free));
-    });
-    if(visible.length===0) return;
+    const visible=TOOLS.filter(t=>t.cat===c&&!((onlyNoVpn&&t.vpn!=="no")||(onlyFree&&t.tier==="paid")));
+    if(!visible.length)return;
     n++;total+=visible.length;
     html+=`<section class="sec"><div class="sec-head">
       <span class="sec-num">${String(n).padStart(2,"0")}</span>
@@ -400,7 +415,10 @@ function render(){
   secWrap.innerHTML=html;
   emptyEl.style.display=total===0?"block":"none";
 }
-function plural(n){const a=n%10,b=n%100;if(a===1&&b!==11)return"инструмент";if(a>=2&&a<=4&&(b<10||b>=20))return"инструмента";return"инструментов";}
+function plural(n){const a=n%10,b=n%100;
+  if(a===1&&b!==11)return"инструмент";
+  if(a>=2&&a<=4&&(b<10||b>=20))return"инструмента";
+  return"инструментов";}
 render();
 </script>
 </body>
